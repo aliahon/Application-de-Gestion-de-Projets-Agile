@@ -18,7 +18,7 @@ public class ProductBacklog {
     private Long id;
 
     private String nom;
-    private String techniquePriorisation;
+    private TechniquePriorisation techniquePriorisation;
     private int sprintDuration;
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)

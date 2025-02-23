@@ -3,6 +3,7 @@ package com.GestionProjet.GestionProjet;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.GestionProjet.GestionProjet.Entities.ProductBacklog;
+import com.GestionProjet.GestionProjet.Entities.TechniquePriorisation;
 import com.GestionProjet.GestionProjet.Entities.UserStory;
 import com.GestionProjet.GestionProjet.Services.ProductBacklogService;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class ProductBacklogServiceTest {
         // Create a ProductBacklog
         ProductBacklog backlog = new ProductBacklog();
         backlog.setNom("Test Backlog");
-        backlog.setTechniquePriorisation("WSJF");
+        backlog.setTechniquePriorisation(TechniquePriorisation.WSJF);
         backlog.setSprintDuration(7);
 
         // Create UserStory
