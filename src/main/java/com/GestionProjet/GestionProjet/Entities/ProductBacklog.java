@@ -1,14 +1,11 @@
 package com.GestionProjet.GestionProjet.Entities;
-
 import jakarta.persistence.*;
 import lombok.*;
 
 
 import java.util.List;
-
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "product_backlog")
