@@ -1,21 +1,37 @@
 package com.GestionProjet.GestionProjet.Entities;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "user_story")
 public class UserStory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    private Priority priority; // good luck hanane :)
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    @ManyToOne
+    @JoinColumn(name = "epic_id")
+    private Epic epic; // Lien optionnel avec un Epic
+
     @ManyToOne
     @JoinColumn(name = "product_backlog_id")
     private ProductBacklog productBacklog;
+
+    @ManyToOne
+    @JoinColumn(name = "sprint_backlog_id")
+    private SprintBacklog sprintBacklog;
 }
