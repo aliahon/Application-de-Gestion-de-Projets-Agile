@@ -38,7 +38,7 @@ class UserStoryServiceTest {
                 .priority(Priority.HIGH)
                 .status(Status.TO_DO)
                 .build();
-        userStory = userStoryRepository.save(userStory);
+        userStoryRepository.save(userStory);
     }
 
     @Test
