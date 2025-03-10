@@ -3,34 +3,40 @@ package com.GestionProjet.GestionProjet.ServicesTests;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.GestionProjet.GestionProjet.DTOClasses.ProductBacklogDTO;
 import com.GestionProjet.GestionProjet.Entities.ProductBacklog;
 import com.GestionProjet.GestionProjet.Entities.TechniquePriorisation;
 import com.GestionProjet.GestionProjet.Repositories.ProductBacklogRepository;
 import com.GestionProjet.GestionProjet.Services.ProductBacklogService;
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
-@SpringBootTest
 public class ProductBacklogServiceTest {
 
-    @Autowired
+    @Mock
     private ProductBacklogRepository productBacklogRepository;
 
-    @Autowired
+    @InjectMocks
     private ProductBacklogService productBacklogService;
 
     private ProductBacklog backlog;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         backlog = new ProductBacklog();
         backlog.setNom("Test Backlog");
         backlog.setTechniquePriorisation(TechniquePriorisation.WSJF);
         backlog.setSprintDuration(7);
-        productBacklogRepository.save(backlog);
+
+        when(productBacklogRepository.save(any(ProductBacklog.class))).thenAnswer(invocation -> {
+            ProductBacklog savedBacklog = invocation.getArgument(0);
+            savedBacklog.setId(1L);
+            return savedBacklog;
+        });
     }
 
     @Test
@@ -38,15 +44,22 @@ public class ProductBacklogServiceTest {
         ProductBacklog savedBacklog = productBacklogService.createProductBacklog(backlog);
         assertNotNull(savedBacklog);
         assertEquals("Test Backlog", savedBacklog.getNom());
+        assertEquals(1L, savedBacklog.getId());
         System.out.println("Created Backlog: " + savedBacklog);
     }
 
     @Test
     void testUpdateProductBacklog() {
-        backlog.setSprintDuration(14);
+        ProductBacklogDTO dto = new ProductBacklogDTO();
+        dto.nom = "Updated Backlog";
+        dto.sprintDuration = 14;
 
-        ProductBacklog updatedBacklog = productBacklogService.updateProductBacklog(1L, backlog);
+        when(productBacklogRepository.findById(anyLong())).thenReturn(Optional.of(backlog));
+        when(productBacklogRepository.save(any(ProductBacklog.class))).thenReturn(backlog);
+
+        ProductBacklog updatedBacklog = productBacklogService.updateProductBacklog(1L, dto);
         assertNotNull(updatedBacklog);
+        assertEquals("Updated Backlog", updatedBacklog.getNom());
         assertEquals(14, updatedBacklog.getSprintDuration());
         System.out.println("Updated Backlog: " + updatedBacklog);
     }
@@ -54,8 +67,7 @@ public class ProductBacklogServiceTest {
     @Test
     void testDeleteProductBacklog() {
         productBacklogService.deleteProductBacklog(1L);
-        Optional<ProductBacklog> res = productBacklogRepository.findById(backlog.getId());
-        assertTrue(res.isPresent());
+        verify(productBacklogRepository, times(1)).deleteById(1L);
+        System.out.println("Delete verified.");
     }
 }
-
