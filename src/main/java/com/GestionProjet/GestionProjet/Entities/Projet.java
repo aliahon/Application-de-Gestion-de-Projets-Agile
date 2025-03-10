@@ -10,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "projet")
+
+@Builder
 public class Projet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

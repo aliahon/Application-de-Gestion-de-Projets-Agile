@@ -27,10 +27,11 @@ public class ProductBacklogServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        backlog = new ProductBacklog();
-        backlog.setNom("Test Backlog");
-        backlog.setTechniquePriorisation(TechniquePriorisation.WSJF);
-        backlog.setSprintDuration(7);
+        backlog = ProductBacklog.builder()
+                .nom("Test Backlog")
+                .techniquePriorisation(TechniquePriorisation.WSJF)
+                .sprintDuration(7)
+                .build();
 
         when(productBacklogRepository.save(any(ProductBacklog.class))).thenAnswer(invocation -> {
             ProductBacklog savedBacklog = invocation.getArgument(0);
@@ -50,9 +51,10 @@ public class ProductBacklogServiceTest {
 
     @Test
     void testUpdateProductBacklog() {
-        ProductBacklogDTO dto = new ProductBacklogDTO();
-        dto.nom = "Updated Backlog";
-        dto.sprintDuration = 14;
+        ProductBacklogDTO dto = ProductBacklogDTO.builder()
+                .nom("Updated Backlog")
+                .sprintDuration(14)
+                .build();
 
         when(productBacklogRepository.findById(anyLong())).thenReturn(Optional.of(backlog));
         when(productBacklogRepository.save(any(ProductBacklog.class))).thenReturn(backlog);

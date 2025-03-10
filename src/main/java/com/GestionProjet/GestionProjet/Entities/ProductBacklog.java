@@ -12,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "product_backlog")
+
+@Builder
 public class ProductBacklog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

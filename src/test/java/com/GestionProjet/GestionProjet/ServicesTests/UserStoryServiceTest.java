@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -60,9 +59,6 @@ public class UserStoryServiceTest {
         assertEquals("Créer un Product Backlog", result.get(0).getTitle());
     }
 
-
-
-
     @Test
     void testCreateUserStory() {
         UserStory newUserStory = UserStory.builder()
@@ -82,9 +78,10 @@ public class UserStoryServiceTest {
 
     @Test
     void testUpdateUserStory_Found() {
-        UserStoryDTO dto = new UserStoryDTO();
-        dto.title = "Mise à jour du Backlog";
-        dto.description = "Modification du backlog";
+        UserStoryDTO dto = UserStoryDTO.builder()
+                .title("Mise à jour du Backlog")
+                .description("Modification du backlog")
+                .build();
 
         when(userStoryRepository.findById(userStory.getId())).thenReturn(Optional.of(userStory));
         when(userStoryRepository.save(any(UserStory.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -98,12 +95,12 @@ public class UserStoryServiceTest {
         assertEquals("Modification du backlog", result.getDescription());
     }
 
-
     @Test
     void testUpdateUserStory_NotFound() {
-        UserStoryDTO dto = new UserStoryDTO();
-        dto.title = "Mise à jour inexistante";
-        dto.description = "Ne devrait pas fonctionner";
+        UserStoryDTO dto = UserStoryDTO.builder()
+                .title("Mise à jour inexistante")
+                .description("Ne devrait pas fonctionner")
+                .build();
 
         when(userStoryRepository.findById(anyLong())).thenReturn(Optional.empty());
         UserStory result = userStoryService.updateUserStory(999L, dto);

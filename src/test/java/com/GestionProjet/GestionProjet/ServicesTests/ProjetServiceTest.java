@@ -26,9 +26,10 @@ public class ProjetServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        projet = new Projet();
-        projet.setNom("Test Projet");
-        projet.setDescription("Projet de test");
+        projet = Projet.builder()
+                .nom("Test Projet")
+                .description("Projet de test")
+                .build();
 
         when(projetRepository.save(any(Projet.class))).thenAnswer(invocation -> {
             Projet savedProjet = invocation.getArgument(0);
@@ -49,9 +50,10 @@ public class ProjetServiceTest {
     @Test
     void testUpdateProjet() {
         // Arrange
-        ProjetDTO projetDTO = new ProjetDTO();
-        projetDTO.nom = "Updated Projet";
-        projetDTO.description = "Updated description";
+        ProjetDTO projetDTO = ProjetDTO.builder()
+                .nom("Updated Projet")
+                .description("Updated description")
+                .build();
 
         // Mock repository behavior
         when(projetRepository.findById(anyLong())).thenReturn(Optional.of(projet));
