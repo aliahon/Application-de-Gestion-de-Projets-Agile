@@ -34,4 +34,16 @@ public class UserStory {
     @ManyToOne
     @JoinColumn(name = "sprint_backlog_id")
     private SprintBacklog sprintBacklog;
+
+    @Override
+    public String toString() {
+        return "UserStory{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
+                ", status=" + status +
+                ", productBacklogId=" + (productBacklog != null ? productBacklog.getId() : "null") +
+                '}';
+    }
 }

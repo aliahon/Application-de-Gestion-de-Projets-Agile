@@ -12,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "product_backlog")
+
+@Builder
 public class ProductBacklog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +34,20 @@ public class ProductBacklog {
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SprintBacklog> sprintBacklogs;
+
+    @ManyToOne
+    @JoinColumn(name = "projet_id", nullable = false)
+    private Projet projet;
+
+    @Override
+    public String toString() {
+        return "ProductBacklog{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", techniquePriorisation='" + techniquePriorisation + '\'' +
+                ", sprintDuration=" + sprintDuration +
+                ", userStoriesCount=" + (userStories != null ? userStories.size() : 0) +
+                ", projetId=" + (projet != null ? projet.getId() : "null") +
+                '}';
+    }
 }
