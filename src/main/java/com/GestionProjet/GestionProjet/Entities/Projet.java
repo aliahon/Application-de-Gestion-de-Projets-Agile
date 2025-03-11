@@ -20,8 +20,8 @@ public class Projet {
     private String nom;
     private String description;
 
-    @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductBacklog> productBacklogs;
+    @OneToOne(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductBacklog productBacklogs;
 
 
     @Override
@@ -30,7 +30,6 @@ public class Projet {
                 "id=" + id +
                 ", nom='" + nom + '\'' +
                 ", description='" + description + '\'' +
-                ", productBacklogsCount=" + (productBacklogs != null ? productBacklogs.size() : 0) +
                 '}';
     }
 }
