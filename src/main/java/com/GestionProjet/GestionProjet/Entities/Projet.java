@@ -12,25 +12,14 @@ import java.util.List;
 @Table(name = "projet")
 
 @Builder
+@Data
 public class Projet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long projet_id;
 
     private String nom;
     private String description;
 
-    @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductBacklog> productBacklogs;
 
-
-    @Override
-    public String toString() {
-        return "Projet{" +
-                "id=" + id +
-                ", nom='" + nom + '\'' +
-                ", description='" + description + '\'' +
-                ", productBacklogsCount=" + (productBacklogs != null ? productBacklogs.size() : 0) +
-                '}';
-    }
 }

@@ -11,14 +11,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductBacklogDTO {
-    @NotNull(message="The product backlog id cannot be null")
-    public Long id;
+public class ProductBacklogCreateDTO {
     @NotBlank(message="You must enter the product backlog name")
     @NotNull(message="The product backlog name cannot be null")
     public String nom;
     @NotNull(message="TechniquePriorisation cannot be null")
-    public TechniquePriorisation techniquePriorisation;
+    public String techniquePriorisation;
     @NotNull(message="projet_id cannot be null")
     public Long projet_id;
 }

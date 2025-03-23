@@ -1,4 +1,4 @@
-package com.GestionProjet.GestionProjet.Entities;
+package com.GestionProjet.GestionProjet.enumeration;
 
 public enum TechniquePriorisation {
     MoSCoW,

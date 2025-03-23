@@ -1,10 +1,11 @@
 package com.GestionProjet.GestionProjet.Entities;
+import com.GestionProjet.GestionProjet.enumeration.Priority;
+import com.GestionProjet.GestionProjet.enumeration.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -35,15 +36,4 @@ public class UserStory {
     @JoinColumn(name = "sprint_backlog_id")
     private SprintBacklog sprintBacklog;
 
-    @Override
-    public String toString() {
-        return "UserStory{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", priority=" + priority +
-                ", status=" + status +
-                ", productBacklogId=" + (productBacklog != null ? productBacklog.getId() : "null") +
-                '}';
-    }
 }

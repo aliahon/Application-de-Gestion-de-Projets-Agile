@@ -1,5 +1,6 @@
 package com.GestionProjet.GestionProjet.Entities;
 
+import com.GestionProjet.GestionProjet.enumeration.TechniquePriorisation;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,12 +8,10 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "product_backlog")
-
 @Builder
 public class ProductBacklog {
     @Id
@@ -21,7 +20,10 @@ public class ProductBacklog {
 
     private String nom;
     private TechniquePriorisation techniquePriorisation;
-    private int sprintDuration;
+
+    @OneToOne
+    @JoinColumn(name = "projet_id", unique = true)
+    private Projet projet;
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> users;
@@ -35,19 +37,6 @@ public class ProductBacklog {
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SprintBacklog> sprintBacklogs;
 
-    @ManyToOne
-    @JoinColumn(name = "projet_id", nullable = false)
-    private Projet projet;
 
-    @Override
-    public String toString() {
-        return "ProductBacklog{" +
-                "id=" + id +
-                ", nom='" + nom + '\'' +
-                ", techniquePriorisation='" + techniquePriorisation + '\'' +
-                ", sprintDuration=" + sprintDuration +
-                ", userStoriesCount=" + (userStories != null ? userStories.size() : 0) +
-                ", projetId=" + (projet != null ? projet.getId() : "null") +
-                '}';
-    }
+
 }
