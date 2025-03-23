@@ -1,75 +1,150 @@
 package com.GestionProjet.GestionProjet.ServicesTests;
 
+import com.GestionProjet.GestionProjet.DTOClasses.ProductBacklogCreateDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.ProductBacklogDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.ProjetDTO;
+import com.GestionProjet.GestionProjet.Entities.ProductBacklog;
+import com.GestionProjet.GestionProjet.Entities.Projet;
+import com.GestionProjet.GestionProjet.Repositories.ProductBacklogRepository;
+import com.GestionProjet.GestionProjet.Repositories.ProjetRepository;
+import com.GestionProjet.GestionProjet.Services.Impl.ProjetServiceImpl;
+import com.GestionProjet.GestionProjet.Services.Impl.ProductBacklogServiceImpl;
+import com.GestionProjet.GestionProjet.enumeration.TechniquePriorisation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.GestionProjet.GestionProjet.DTOClasses.ProductBacklogDTO;
-import com.GestionProjet.GestionProjet.Entities.ProductBacklog;
-import com.GestionProjet.GestionProjet.Entities.TechniquePriorisation;
-import com.GestionProjet.GestionProjet.Repositories.ProductBacklogRepository;
-import com.GestionProjet.GestionProjet.Services.ProductBacklogService;
-import org.junit.jupiter.api.*;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import java.util.Arrays;
 import java.util.Optional;
 
-public class ProductBacklogServiceTest {
+@SpringBootTest
+class ProductBacklogServiceImplTest {
 
     @Mock
     private ProductBacklogRepository productBacklogRepository;
 
+    @Mock
+    private ProjetRepository projetRepository;
+
     @InjectMocks
-    private ProductBacklogService productBacklogService;
+    private ProductBacklogServiceImpl productBacklogService;
 
     private ProductBacklog backlog;
+    private ProductBacklogDTO backlogDTO;
+    private ProductBacklogCreateDTO backlogCreateDTO;
+    private Projet projet;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        backlog = ProductBacklog.builder()
-                .nom("Test Backlog")
-                .techniquePriorisation(TechniquePriorisation.WSJF)
-                .sprintDuration(7)
+        projet = Projet.builder()
+                .projet_id(1L)
+                .nom("Test Project")
                 .build();
 
-        when(productBacklogRepository.save(any(ProductBacklog.class))).thenAnswer(invocation -> {
-            ProductBacklog savedBacklog = invocation.getArgument(0);
-            savedBacklog.setId(1L);
-            return savedBacklog;
-        });
+        backlog = ProductBacklog.builder()
+                .id(1L)
+                .nom("Test Backlog")
+                .techniquePriorisation(TechniquePriorisation.MoSCoW)
+                .projet(projet)
+                .build();
+
+        backlogDTO = ProductBacklogDTO.builder()
+                .id(backlog.getId())
+                .nom("Test Backlog")
+                .techniquePriorisation(TechniquePriorisation.MoSCoW)
+                .projet_id(1L)
+                .build();
+
+        backlogCreateDTO = ProductBacklogCreateDTO.builder()
+                .nom("Test Backlog")
+                .techniquePriorisation("MoSCoW")
+                .projet_id(1L)
+                .build();
+    }
+
+    @Test
+    void testGetAllProductBacklogs() {
+        // Arrange
+        when(productBacklogRepository.findAll()).thenReturn(Arrays.asList(backlog));
+
+        // Act
+        var result = productBacklogService.getAllProductBacklogs();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(backlogDTO.getNom(), result.get(0).getNom());
+    }
+
+    @Test
+    void testGetProductBacklogById() {
+        // Arrange
+        when(productBacklogRepository.findById(1L)).thenReturn(Optional.of(backlog));
+
+        // Act
+        var result = productBacklogService.getProductBacklogById(1L);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(backlogDTO.getNom(), result.getNom());
     }
 
     @Test
     void testCreateProductBacklog() {
-        ProductBacklog savedBacklog = productBacklogService.createProductBacklog(backlog);
-        assertNotNull(savedBacklog);
-        assertEquals("Test Backlog", savedBacklog.getNom());
-        assertEquals(1L, savedBacklog.getId());
-        System.out.println("Created Backlog: " + savedBacklog);
+        // Arrange
+        when(projetRepository.findById(1L)).thenReturn(Optional.of(projet));
+        when(productBacklogRepository.save(any(ProductBacklog.class))).thenReturn(backlog);
+
+        // Act
+        ProductBacklogDTO createdBacklogDTO = productBacklogService.createProductBacklog(backlogCreateDTO);
+
+        // Assert
+        assertNotNull(createdBacklogDTO);
+        assertEquals(backlogDTO.getNom(), createdBacklogDTO.getNom());
+        verify(productBacklogRepository, times(1)).save(any(ProductBacklog.class));
     }
 
     @Test
     void testUpdateProductBacklog() {
-        ProductBacklogDTO dto = ProductBacklogDTO.builder()
-                .nom("Updated Backlog")
-                .sprintDuration(14)
-                .build();
-
-        when(productBacklogRepository.findById(anyLong())).thenReturn(Optional.of(backlog));
+        // Arrange
+        when(productBacklogRepository.findById(1L)).thenReturn(Optional.of(backlog));
         when(productBacklogRepository.save(any(ProductBacklog.class))).thenReturn(backlog);
 
-        ProductBacklog updatedBacklog = productBacklogService.updateProductBacklog(1L, dto);
-        assertNotNull(updatedBacklog);
-        assertEquals("Updated Backlog", updatedBacklog.getNom());
-        assertEquals(14, updatedBacklog.getSprintDuration());
-        System.out.println("Updated Backlog: " + updatedBacklog);
+        // Act
+        ProductBacklogDTO updatedBacklogDTO = productBacklogService.updateProductBacklog(1L, backlogDTO);
+
+        // Assert
+        assertNotNull(updatedBacklogDTO);
+        assertEquals(backlogDTO.getNom(), updatedBacklogDTO.getNom());
+        verify(productBacklogRepository, times(1)).save(any(ProductBacklog.class));
     }
 
     @Test
     void testDeleteProductBacklog() {
+        // Arrange
+        doNothing().when(productBacklogRepository).deleteById(1L);
+
+        // Act
         productBacklogService.deleteProductBacklog(1L);
+
+        // Assert
         verify(productBacklogRepository, times(1)).deleteById(1L);
-        System.out.println("Delete verified.");
+    }
+
+    @Test
+    void testGetProductBacklogByIdNotFound() {
+        // Arrange
+        when(productBacklogRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act
+        var result = productBacklogService.getProductBacklogById(1L);
+
+        // Assert
+        assertNull(result);
     }
 }

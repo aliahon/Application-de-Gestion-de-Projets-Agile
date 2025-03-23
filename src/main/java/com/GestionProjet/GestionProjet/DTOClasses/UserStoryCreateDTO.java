@@ -6,9 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserStoryDTO {
-    @NotNull(message="The user story id cannot be null")
-    public Long id;
+public class UserStoryCreateDTO {
     @NotBlank(message="You must enter the user story title")
     @NotNull(message="The user story title cannot be null")
     public String title;

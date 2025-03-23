@@ -1,8 +1,8 @@
 package com.GestionProjet.GestionProjet.ServicesTests;
 
 import com.GestionProjet.GestionProjet.DTOClasses.UserStoryDTO;
-import com.GestionProjet.GestionProjet.Entities.Priority;
-import com.GestionProjet.GestionProjet.Entities.Status;
+import com.GestionProjet.GestionProjet.enumeration.Priority;
+import com.GestionProjet.GestionProjet.enumeration.Status;
 import com.GestionProjet.GestionProjet.Entities.UserStory;
 import com.GestionProjet.GestionProjet.Repositories.UserStoryRepository;
 import com.GestionProjet.GestionProjet.Services.UserStoryService;
