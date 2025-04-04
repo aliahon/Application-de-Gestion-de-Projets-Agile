@@ -2,6 +2,7 @@ package com.GestionProjet.GestionProjet.Controllers;
 
 import com.GestionProjet.GestionProjet.DTOClasses.SprintBacklogInputDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.SprintBacklogOutputDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.UserStoryInputDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.UserStoryOutputDTO;
 import com.GestionProjet.GestionProjet.Services.SprintBacklogService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,16 @@ public class SprintBacklogController {
 
     private final SprintBacklogService sprintBacklogService;
 
+    // Récupérer tous les Sprint Backlogs
+    @GetMapping
+    public ResponseEntity<List<SprintBacklogOutputDTO>> getAllSprintBacklogs() {
+        try {
+            List<SprintBacklogOutputDTO> sprintBacklogs = sprintBacklogService.getAllSprintBacklogs();
+            return ResponseEntity.ok(sprintBacklogs);
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
     // Créer un Sprint Backlog
     @PostMapping
     public ResponseEntity<SprintBacklogOutputDTO> createSprintBacklog(@RequestBody SprintBacklogInputDTO sprintBacklogInputDTO) {
@@ -28,11 +39,24 @@ public class SprintBacklogController {
         }
     }
 
-    // Ajouter une UserStory au Sprint Backlog
+    // Ajouter une UserStory existant au Sprint Backlog
     @PostMapping("/{sprintId}/userStories/{userStoryId}")
     public ResponseEntity<SprintBacklogOutputDTO> addUserStoryToSprint(@PathVariable Long sprintId, @PathVariable Long userStoryId) {
         try {
             SprintBacklogOutputDTO updatedSprintBacklog = sprintBacklogService.addUserStoryAuSprint(sprintId, userStoryId);
+            return ResponseEntity.ok(updatedSprintBacklog);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Ajouter une nouvelle UserStory au Sprint Backlog
+    @PostMapping("/{sprintId}/userStories")
+    public ResponseEntity<SprintBacklogOutputDTO> addNewUserStoryToSprint(
+            @PathVariable Long sprintId,
+            @RequestBody UserStoryInputDTO userStoryInputDTO) {
+        try {
+            SprintBacklogOutputDTO updatedSprintBacklog = sprintBacklogService.addNewUserStoryToSprint(sprintId, userStoryInputDTO);
             return ResponseEntity.ok(updatedSprintBacklog);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

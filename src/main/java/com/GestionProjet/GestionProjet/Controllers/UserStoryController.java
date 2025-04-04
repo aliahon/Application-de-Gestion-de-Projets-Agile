@@ -17,14 +17,14 @@ public class UserStoryController {
     private final UserStoryService userStoryService;
 
     @GetMapping
-    public ResponseEntity<List<UserStory>> getAllUserStories() {
-        List<UserStory> userStories = userStoryService.getAllUserStories();
+    public ResponseEntity<List<UserStoryOutputDTO>> getAllUserStories() {
+        List<UserStoryOutputDTO> userStories = userStoryService.getAllUserStories();
         return ResponseEntity.ok(userStories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserStory> getUserStoryById(@PathVariable Long id) {
-        UserStory userStory = userStoryService.getUserStoryById(id);
+    public ResponseEntity<UserStoryOutputDTO> getUserStoryById(@PathVariable Long id) {
+        UserStoryOutputDTO userStory = userStoryService.getUserStoryById(id);
         if (userStory != null) {
             return ResponseEntity.ok(userStory);
         } else {
@@ -33,18 +33,18 @@ public class UserStoryController {
     }
 
     @PostMapping
-    public ResponseEntity<UserStory> createUserStory(@RequestBody UserStory userStory) {
+    public ResponseEntity<UserStoryOutputDTO> createUserStory(@RequestBody UserStory userStory) {
         try {
-            UserStory created = userStoryService.createUserStory(userStory);
+            UserStoryOutputDTO created = userStoryService.createUserStory(userStory);
             return ResponseEntity.ok(created);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserStory> updateUserStory(@PathVariable Long id, @RequestBody UserStoryOutputDTO dto) {
-        UserStory updated = userStoryService.updateUserStory(id, dto);
+    public ResponseEntity<UserStoryOutputDTO> updateUserStory(@PathVariable Long id, @RequestBody UserStoryOutputDTO dto) {
+        UserStoryOutputDTO updated = userStoryService.updateUserStory(id, dto);
         if (updated != null) {
             return ResponseEntity.ok(updated);
         } else {

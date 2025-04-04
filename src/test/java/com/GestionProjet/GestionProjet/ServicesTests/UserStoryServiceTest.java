@@ -5,7 +5,7 @@ import com.GestionProjet.GestionProjet.enumeration.Priority;
 import com.GestionProjet.GestionProjet.enumeration.Status;
 import com.GestionProjet.GestionProjet.Entities.UserStory;
 import com.GestionProjet.GestionProjet.Repositories.UserStoryRepository;
-import com.GestionProjet.GestionProjet.Services.UserStoryService;
+import com.GestionProjet.GestionProjet.Services.Impl.UserStoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ public class UserStoryServiceTest {
     private UserStoryRepository userStoryRepository;
 
     @InjectMocks
-    private UserStoryService userStoryService;
+    private UserStoryServiceImpl userStoryService;
 
     private UserStory userStory;
 
@@ -34,6 +34,7 @@ public class UserStoryServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         userStory = UserStory.builder()
+                .id(1L)
                 .title("Créer un Product Backlog")
                 .description("Permettre au Product Owner de créer un backlog")
                 .priority(Priority.HIGH)
@@ -50,7 +51,7 @@ public class UserStoryServiceTest {
     @Test
     void testGetAllUserStories() {
         when(userStoryRepository.findAll()).thenReturn(List.of(userStory));
-        List<UserStory> result = userStoryService.getAllUserStories();
+        List<UserStoryOutputDTO> result = userStoryService.getAllUserStories();
 
         System.out.println("Results: " + result);
 
@@ -68,7 +69,7 @@ public class UserStoryServiceTest {
                 .status(Status.IN_PROGRESS)
                 .build();
 
-        UserStory result = userStoryService.createUserStory(newUserStory);
+        UserStoryOutputDTO result = userStoryService.createUserStory(newUserStory);
 
         assertNotNull(result);
         assertEquals("Nouvelle User Story", result.getTitle());
@@ -86,7 +87,7 @@ public class UserStoryServiceTest {
         when(userStoryRepository.findById(userStory.getId())).thenReturn(Optional.of(userStory));
         when(userStoryRepository.save(any(UserStory.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        UserStory result = userStoryService.updateUserStory(userStory.getId(), dto);
+        UserStoryOutputDTO result = userStoryService.updateUserStory(userStory.getId(), dto);
 
         System.out.println("Updated User Story: " + result);
 
@@ -103,7 +104,7 @@ public class UserStoryServiceTest {
                 .build();
 
         when(userStoryRepository.findById(anyLong())).thenReturn(Optional.empty());
-        UserStory result = userStoryService.updateUserStory(999L, dto);
+        UserStoryOutputDTO result = userStoryService.updateUserStory(999L, dto);
 
         System.out.println("Update Not Found: " + result);
 

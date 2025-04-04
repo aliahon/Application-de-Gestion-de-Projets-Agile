@@ -3,7 +3,7 @@ package com.GestionProjet.GestionProjet.Services;
 import com.GestionProjet.GestionProjet.DTOClasses.SprintBacklogInputDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.SprintBacklogOutputDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.UserStoryOutputDTO;
-
+import com.GestionProjet.GestionProjet.DTOClasses.UserStoryInputDTO;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +14,8 @@ public interface SprintBacklogService {
 
     // Ajouter une User Story au Sprint Backlog
     SprintBacklogOutputDTO addUserStoryAuSprint(Long sprintBacklogId, Long userStoryId);
+
+    SprintBacklogOutputDTO addNewUserStoryToSprint(Long sprintId, UserStoryInputDTO userStoryInputDTO);
 
     // Récupérer les User Stories d'un Sprint Backlog
     List<UserStoryOutputDTO> getUserStoriesBySprintBacklog(Long sprintBacklogId);

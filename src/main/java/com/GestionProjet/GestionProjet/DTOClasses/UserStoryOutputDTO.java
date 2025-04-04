@@ -1,16 +1,19 @@
 package com.GestionProjet.GestionProjet.DTOClasses;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
+import com.GestionProjet.GestionProjet.enumeration.Priority;
+import com.GestionProjet.GestionProjet.enumeration.Status;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
 public class UserStoryOutputDTO {
-    @NotNull(message="The user story id cannot be null")
-    public Long id;
-    @NotBlank(message="You must enter the user story title")
-    @NotNull(message="The user story title cannot be null")
-    public String title;
-    public String description;
+    private Long id;
+    private String title;
+    private String description;
+    private Priority priority;
+    private Status status;
+    private Long epicId;             // Optional: ID of associated Epic
+    private Long productBacklogId;   // Optional: ID of associated Product Backlog
+    private Long sprintBacklogId;    // Optional: ID of associated Sprint Backlog
 }

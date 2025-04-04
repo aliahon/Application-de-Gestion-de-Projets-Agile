@@ -3,6 +3,7 @@ package com.GestionProjet.GestionProjet.Services.Impl;
 import com.GestionProjet.GestionProjet.DTOClasses.SprintBacklogInputDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.SprintBacklogOutputDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.UserStoryOutputDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.UserStoryInputDTO;
 import com.GestionProjet.GestionProjet.Entities.SprintBacklog;
 import com.GestionProjet.GestionProjet.Entities.ProductBacklog;
 import com.GestionProjet.GestionProjet.Entities.UserStory;
@@ -78,6 +79,39 @@ public class SprintBacklogServiceImpl implements SprintBacklogService {
                 .dateFin(sprintBacklog.getDateFin())
                 .productBacklogId(sprintBacklog.getProductBacklog().getId())
                 .userStories(userStoryDTOs)
+                .build();
+    }
+
+    @Override
+    public SprintBacklogOutputDTO addNewUserStoryToSprint(Long sprintId, UserStoryInputDTO userStoryInputDTO) {
+        SprintBacklog sprintBacklog = sprintBacklogRepository.findById(sprintId)
+                .orElseThrow(() -> new RuntimeException("Sprint Backlog non trouvé"));
+
+        UserStory userStory = new UserStory();
+        userStory.setTitle(userStoryInputDTO.getTitle());
+        userStory.setDescription(userStoryInputDTO.getDescription());
+        userStory.setSprintBacklog(sprintBacklog);
+
+        userStoryRepository.save(userStory);
+
+        sprintBacklog.getUserStories().add(userStory);
+        sprintBacklogRepository.save(sprintBacklog);
+
+        List<UserStoryOutputDTO> userStories = sprintBacklog.getUserStories().stream()
+                .map(us -> UserStoryOutputDTO.builder()
+                        .id(us.getId())
+                        .title(us.getTitle())
+                        .description(us.getDescription())
+                        .build())
+                .collect(Collectors.toList());
+
+        return SprintBacklogOutputDTO.builder()
+                .id(sprintBacklog.getId())
+                .nom(sprintBacklog.getNom())
+                .dateDebut(sprintBacklog.getDateDebut())
+                .dateFin(sprintBacklog.getDateFin())
+                .productBacklogId(sprintBacklog.getProductBacklog().getId())
+                .userStories(userStories)
                 .build();
     }
 
