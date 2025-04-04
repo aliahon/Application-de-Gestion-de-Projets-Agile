@@ -5,6 +5,7 @@ import com.GestionProjet.GestionProjet.DTOClasses.ProductBacklogDTO;
 import com.GestionProjet.GestionProjet.Entities.ProductBacklog;
 import com.GestionProjet.GestionProjet.Repositories.ProductBacklogRepository;
 import com.GestionProjet.GestionProjet.Repositories.ProjetRepository;
+import com.GestionProjet.GestionProjet.Services.ProductBacklogService;
 import com.GestionProjet.GestionProjet.enumeration.TechniquePriorisation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProductBacklogServiceImpl implements com.GestionProjet.GestionProjet.Services.ProductBacklogService {
+public class ProductBacklogServiceImpl implements ProductBacklogService {
     private final ProductBacklogRepository repository;
     private final ProjetRepository projetRepository;
 

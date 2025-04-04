@@ -19,7 +19,7 @@ public class UserStory {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private Priority priority; // good luck hanane :)
+    private Priority priority;
 
     @Enumerated(EnumType.STRING)
     private Status status;
