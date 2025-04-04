@@ -1,9 +1,12 @@
 package com.GestionProjet.GestionProjet.ServicesTests;
+
+import com.GestionProjet.GestionProjet.DTOClasses.SprintBacklogOutputDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.UserStoryOutputDTO;
 import com.GestionProjet.GestionProjet.Entities.SprintBacklog;
 import com.GestionProjet.GestionProjet.Entities.UserStory;
 import com.GestionProjet.GestionProjet.Repositories.SprintBacklogRepository;
 import com.GestionProjet.GestionProjet.Repositories.UserStoryRepository;
-import com.GestionProjet.GestionProjet.Services.SprintBacklogService;
+import com.GestionProjet.GestionProjet.Services.Impl.SprintBacklogServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,7 +30,7 @@ class SprintBacklogServiceTest {
     private UserStoryRepository userStoryRepository;
 
     @InjectMocks
-    private SprintBacklogService sprintBacklogService;
+    private SprintBacklogServiceImpl sprintBacklogService;
 
     private SprintBacklog sprintBacklog;
     private UserStory userStory;
@@ -53,9 +56,18 @@ class SprintBacklogServiceTest {
     /*TEST 1 : Création d'un Sprint Backlog */
     @Test
     void testCreerSprintBacklog() {
+        // Creating DTO for expected result
+        SprintBacklogOutputDTO sprintBacklogOutputDTO = SprintBacklogOutputDTO.builder()
+                .id(1L)
+                .nom("Sprint 1")
+                .dateDebut(LocalDate.of(2024, 3, 1))
+                .dateFin(LocalDate.of(2024, 3, 15))
+                .productBacklogId(1L) // Assuming it's set
+                .build();
+
         when(sprintBacklogRepository.save(any(SprintBacklog.class))).thenReturn(sprintBacklog);
 
-        SprintBacklog createdSprint = sprintBacklogService.creerSprintBacklog(sprintBacklog);
+        SprintBacklogOutputDTO createdSprint = sprintBacklogService.creerSprintBacklog(sprintBacklog);
 
         assertNotNull(createdSprint);
         assertEquals("Sprint 1", createdSprint.getNom());
@@ -69,7 +81,7 @@ class SprintBacklogServiceTest {
         when(userStoryRepository.findById(1L)).thenReturn(Optional.of(userStory));
         when(sprintBacklogRepository.save(any(SprintBacklog.class))).thenReturn(sprintBacklog);
 
-        SprintBacklog updatedSprint = sprintBacklogService.ajouterUserStoryAuSprint(1L, 1L);
+        SprintBacklogOutputDTO updatedSprint = sprintBacklogService.ajouterUserStoryAuSprint(1L, 1L);
 
         assertEquals(1, updatedSprint.getUserStories().size());
         assertEquals("Créer la page d'authentification", updatedSprint.getUserStories().get(0).getDescription());
@@ -80,13 +92,18 @@ class SprintBacklogServiceTest {
 
     /* TEST 4 : Récupérer les User Stories d'un Sprint */
     @Test
-    void testGetUserStoriesBySprint() {
-        userStory.setSprintBacklog(sprintBacklog);
-        sprintBacklog.getUserStories().add(userStory);
+    void testGetUserStoriesBySprintBacklog() {
+        UserStoryOutputDTO userStoryDTO = UserStoryOutputDTO.builder()
+                .id(1L)
+                .description("Créer la page d'authentification")
+                .build();
+        List<UserStoryOutputDTO> userStoryDTOs = List.of(userStoryDTO);
+
+        sprintBacklog.setUserStories(List.of(userStory));
 
         when(sprintBacklogRepository.findById(1L)).thenReturn(Optional.of(sprintBacklog));
 
-        List<UserStory> userStories = sprintBacklogService.getUserStoriesBySprint(1L);
+        List<UserStoryOutputDTO> userStories = sprintBacklogService.getUserStoriesBySprintBacklog(1L);
 
         assertNotNull(userStories);
         assertEquals(1, userStories.size());

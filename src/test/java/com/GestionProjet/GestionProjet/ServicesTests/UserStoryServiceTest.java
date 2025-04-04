@@ -1,6 +1,6 @@
 package com.GestionProjet.GestionProjet.ServicesTests;
 
-import com.GestionProjet.GestionProjet.DTOClasses.UserStoryDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.UserStoryOutputDTO;
 import com.GestionProjet.GestionProjet.enumeration.Priority;
 import com.GestionProjet.GestionProjet.enumeration.Status;
 import com.GestionProjet.GestionProjet.Entities.UserStory;
@@ -78,7 +78,7 @@ public class UserStoryServiceTest {
 
     @Test
     void testUpdateUserStory_Found() {
-        UserStoryDTO dto = UserStoryDTO.builder()
+        UserStoryOutputDTO dto = UserStoryOutputDTO.builder()
                 .title("Mise à jour du Backlog")
                 .description("Modification du backlog")
                 .build();
@@ -97,7 +97,7 @@ public class UserStoryServiceTest {
 
     @Test
     void testUpdateUserStory_NotFound() {
-        UserStoryDTO dto = UserStoryDTO.builder()
+        UserStoryOutputDTO dto = UserStoryOutputDTO.builder()
                 .title("Mise à jour inexistante")
                 .description("Ne devrait pas fonctionner")
                 .build();

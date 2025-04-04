@@ -1,10 +1,10 @@
 package com.GestionProjet.GestionProjet.Services.Impl;
 
-import com.GestionProjet.GestionProjet.DTOClasses.UserStoryDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.UserStoryOutputDTO;
 import com.GestionProjet.GestionProjet.Entities.UserStory;
 import com.GestionProjet.GestionProjet.Repositories.UserStoryRepository;
+import com.GestionProjet.GestionProjet.Services.UserStoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserStoryServiceImpl implements com.GestionProjet.GestionProjet.Services.UserStoryService {
+public class UserStoryServiceImpl implements UserStoryService {
     private final UserStoryRepository repo;
     
     @Override
@@ -37,7 +37,7 @@ public class UserStoryServiceImpl implements com.GestionProjet.GestionProjet.Ser
     }
 
     @Override
-    public UserStory updateUserStory(Long id, UserStoryDTO dto){
+    public UserStory updateUserStory(Long id, UserStoryOutputDTO dto){
         Optional<UserStory> existingUserStory = repo.findById(id);
         if (existingUserStory.isPresent()) {
             UserStory userStory = existingUserStory.get();

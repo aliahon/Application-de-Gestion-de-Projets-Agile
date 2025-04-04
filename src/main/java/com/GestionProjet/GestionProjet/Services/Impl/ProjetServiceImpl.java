@@ -4,6 +4,7 @@ import com.GestionProjet.GestionProjet.DTOClasses.ProjetCreateDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.ProjetDTO;
 import com.GestionProjet.GestionProjet.Entities.Projet;
 import com.GestionProjet.GestionProjet.Repositories.ProjetRepository;
+import com.GestionProjet.GestionProjet.Services.ProjetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ProjetServiceImpl implements com.GestionProjet.GestionProjet.Services.ProjetService {
+public class ProjetServiceImpl implements ProjetService {
     private final ProjetRepository repository;
 
 

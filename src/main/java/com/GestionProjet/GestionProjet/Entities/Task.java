@@ -1,28 +1,30 @@
 package com.GestionProjet.GestionProjet.Entities;
+
+import com.GestionProjet.GestionProjet.enumeration.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "epic")
-public class Epic {
+@Builder
+@Table(name = "task")
+public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nom", nullable = false, length = 100)
-    private String nom;
-
-    @Column(name = "description", length = 500)
+    private String title;
     private String description;
+    private Status status;
 
     @ManyToOne
-    @JoinColumn(name = "product_backlog_id")
-    private ProductBacklog productBacklog;
+    @JoinColumn(name = "us_id")
+    private UserStory userstory;
+
 }
