@@ -10,10 +10,10 @@ import java.util.Optional;
 public interface SprintBacklogService {
 
     // Créer un nouveau Sprint Backlog
-    SprintBacklogOutputDTO creerSprintBacklog(SprintBacklogInputDTO sprintBacklogInputDTO);
+    SprintBacklogOutputDTO createSprintBacklog(SprintBacklogInputDTO sprintBacklogInputDTO);
 
     // Ajouter une User Story au Sprint Backlog
-    SprintBacklogOutputDTO ajouterUserStoryAuSprint(Long sprintBacklogId, Long userStoryId);
+    SprintBacklogOutputDTO addUserStoryAuSprint(Long sprintBacklogId, Long userStoryId);
 
     // Récupérer les User Stories d'un Sprint Backlog
     List<UserStoryOutputDTO> getUserStoriesBySprintBacklog(Long sprintBacklogId);

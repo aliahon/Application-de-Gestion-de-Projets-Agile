@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +20,7 @@ public class SprintBacklogOutputDTO {
     private String nom;
     private LocalDate dateDebut;
     private LocalDate dateFin;
-
+    @Builder.Default
+    private List<UserStoryOutputDTO> userStories = new ArrayList<>();
     private Long productBacklogId; // L'ID du ProductBacklog associé
 }

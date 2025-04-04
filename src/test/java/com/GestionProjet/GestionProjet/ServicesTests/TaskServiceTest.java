@@ -3,122 +3,189 @@ package com.GestionProjet.GestionProjet.ServicesTests;
 import com.GestionProjet.GestionProjet.DTOClasses.TaskInputDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.TaskOutputDTO;
 import com.GestionProjet.GestionProjet.Entities.Task;
+import com.GestionProjet.GestionProjet.Entities.UserStory;
 import com.GestionProjet.GestionProjet.Repositories.TaskRepository;
+import com.GestionProjet.GestionProjet.Repositories.UserStoryRepository;
 import com.GestionProjet.GestionProjet.Services.Impl.TaskServiceImpl;
 import com.GestionProjet.GestionProjet.enumeration.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.mockito.MockitoAnnotations;
-
 class TaskServiceTest {
-
-    @Mock
-    private TaskRepository taskRepository;
 
     @InjectMocks
     private TaskServiceImpl taskService;
 
+    @Mock
+    private TaskRepository taskRepository;
+
+    @Mock
+    private UserStoryRepository userStoryRepository;
+
+    private UserStory userStory;
+
     private Task task;
-    private TaskInputDTO taskInputDTO;
-    private TaskOutputDTO taskOutputDTO;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        userStory = new UserStory();
+        userStory.setId(1L);
+        userStory.setTitle("Test UserStory");
+        // Optionally, you can set up a Task object here for other tests
+        Task task = new Task();
+        task.setId(1L);
+        task.setTitle("Test Task");
+        task.setDescription("Description of the task");
+        task.setStatus(Status.IN_PROGRESS);
+        task.setUserstory(userStory);
 
-        // Préparer l'objet Task (Entité)
-        task = Task.builder()
-                .id(1L)
-                .title("Task 1")
-                .description("Description 1")
-                .status(Status.TO_DO)
-                .build();
+        // Mocking repository calls as needed, for example:
+        when(taskRepository.save(any(Task.class))).thenReturn(task);
 
-        // Préparer le TaskInputDTO (Entrée)
-        taskInputDTO = TaskInputDTO.builder()
-                .title("Task 1")
-                .description("Description 1")
-                .status(Status.TO_DO)
-                .build();
-
-        // Préparer le TaskOutputDTO (Sortie)
-        taskOutputDTO = TaskOutputDTO.builder()
-                .id(1L)
-                .title("Task 1")
-                .description("Description 1")
-                .status(Status.TO_DO)
-                .build();
     }
 
     @Test
     void testCreateTask() {
+        // Mock the UserStory repository
+        when(userStoryRepository.findById(1L)).thenReturn(Optional.of(userStory));
+
+        TaskInputDTO taskInputDTO = TaskInputDTO.builder()
+                .title("Test Task")
+                .description("Description of the task")
+                .status(Status.IN_PROGRESS)
+                .userStoryId(1L) // Set the UserStory ID here
+                .build();
+
+        Task task = new Task();
+        task.setId(1L);
+        task.setTitle("Test Task");
+        task.setDescription("Description of the task");
+        task.setStatus(Status.IN_PROGRESS);
+        task.setUserstory(userStory);
+
+        // Mock the save method to return the task
         when(taskRepository.save(any(Task.class))).thenReturn(task);
 
-        // Appel au service
-        TaskOutputDTO created = taskService.createTask(taskInputDTO);
+        // Call the service
+        TaskOutputDTO result = taskService.createTask(taskInputDTO);
 
-        // Vérifier la création avec les valeurs du DTO
-        assertEquals("Task 1", created.getTitle());
+        // Assert the task creation
+        assertEquals("Test Task", result.getTitle());
+        assertEquals("Description of the task", result.getDescription());
+        assertEquals(Status.IN_PROGRESS, result.getStatus());
+        assertEquals(1L, result.getUserStoryId()); // Verify that userStoryId was correctly set
     }
 
     @Test
     void testGetAllTasks() {
-        when(taskRepository.findAll()).thenReturn(Arrays.asList(task));
+        // Prepare mock tasks
+        Task task1 = new Task();
+        task1.setId(1L);
+        task1.setTitle("Test Task 1");
+        task1.setDescription("Description of task 1");
+        task1.setStatus(Status.DONE);
+        task1.setUserstory(userStory);
 
-        List<TaskOutputDTO> tasks = taskService.getAllTasks();
+        Task task2 = new Task();
+        task2.setId(2L);
+        task2.setTitle("Test Task 2");
+        task2.setDescription("Description of task 2");
+        task2.setStatus(Status.IN_PROGRESS);
+        task2.setUserstory(userStory);
 
-        // Vérifier le nombre de tâches et l'id
-        assertEquals(1, tasks.size());
-        assertEquals(1L, tasks.get(0).getId());
+        // Mock findAll to return the tasks
+        when(taskRepository.findAll()).thenReturn(List.of(task1, task2));
+
+        // Call the service
+        List<TaskOutputDTO> result = taskService.getAllTasks();
+
+        // Assert the results
+        assertEquals(2, result.size());
+        assertEquals("Test Task 1", result.get(0).getTitle());
+        assertEquals("Test Task 2", result.get(1).getTitle());
     }
 
     @Test
     void testGetTaskById() {
+        Task task = new Task();
+        task.setId(1L);
+        task.setTitle("Test Task");
+        task.setDescription("Description of the task");
+        task.setStatus(Status.IN_PROGRESS);
+        task.setUserstory(userStory);
+
+        // Mock findById to return the task
         when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
-        Optional<TaskOutputDTO> found = taskService.getTaskById(1L);
+        // Call the service
+        Optional<TaskOutputDTO> result = taskService.getTaskById(1L);
 
-        // Vérifier que la tâche a été trouvée
-        assertTrue(found.isPresent());
-        assertEquals("Task 1", found.get().getTitle());
+        // Assert the result
+        assertTrue(result.isPresent());
+        assertEquals("Test Task", result.get().getTitle());
     }
 
     @Test
     void testUpdateTask() {
-        TaskInputDTO updatedDTO = TaskInputDTO.builder()
+        // Prepare mock task
+        Task task = new Task();
+        task.setId(1L);
+        task.setTitle("Old Task");
+        task.setDescription("Old description");
+        task.setStatus(Status.TO_DO);
+        task.setUserstory(userStory);
+
+        // Mock the repository to return the task when findById is called
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+
+        // Mock the UserStory repository
+        when(userStoryRepository.findById(1L)).thenReturn(Optional.of(userStory));
+
+        TaskInputDTO taskInputDTO = TaskInputDTO.builder()
                 .title("Updated Task")
-                .description("Updated Description")
-                .status(Status.DONE)
+                .description("Updated description")
+                .status(Status.IN_PROGRESS)
+                .userStoryId(1L)
                 .build();
 
-        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
-        when(taskRepository.save(any(Task.class))).thenReturn(task);
+        // Call the service
+        TaskOutputDTO updatedTask = taskService.updateTask(1L, taskInputDTO);
 
-        // Appel de la mise à jour
-        TaskOutputDTO result = taskService.updateTask(1L, updatedDTO);
-
-        // Vérifier la mise à jour avec les valeurs du DTO
-        assertEquals("Updated Task", result.getTitle());
-        assertEquals(Status.DONE, result.getStatus());
+        // Assert the update
+        assertEquals("Updated Task", updatedTask.getTitle());
+        assertEquals("Updated description", updatedTask.getDescription());
+        assertEquals(Status.IN_PROGRESS, updatedTask.getStatus());
+        assertEquals(1L, updatedTask.getUserStoryId()); // Ensure UserStoryId is correctly set
     }
 
     @Test
     void testDeleteTask() {
+        // Prepare a task to delete
+        Task task = new Task();
+        task.setId(1L);
+        task.setTitle("Test Task to delete");
+        task.setDescription("Description of the task to delete");
+        task.setStatus(Status.DONE);
+        task.setUserstory(userStory);
+
+        // Mock the deleteById method
         doNothing().when(taskRepository).deleteById(1L);
 
+        // Call the service
         taskService.deleteTask(1L);
 
-        // Vérifier que la suppression a bien eu lieu
+        // Verify that deleteById was called with the correct argument
         verify(taskRepository, times(1)).deleteById(1L);
     }
 }

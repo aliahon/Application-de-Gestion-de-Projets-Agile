@@ -21,7 +21,7 @@ public class SprintBacklogController {
     @PostMapping
     public ResponseEntity<SprintBacklogOutputDTO> createSprintBacklog(@RequestBody SprintBacklogInputDTO sprintBacklogInputDTO) {
         try {
-            SprintBacklogOutputDTO createdSprintBacklog = sprintBacklogService.creerSprintBacklog(sprintBacklogInputDTO);
+            SprintBacklogOutputDTO createdSprintBacklog = sprintBacklogService.createSprintBacklog(sprintBacklogInputDTO);
             return ResponseEntity.ok(createdSprintBacklog);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
@@ -32,7 +32,7 @@ public class SprintBacklogController {
     @PostMapping("/{sprintId}/userStories/{userStoryId}")
     public ResponseEntity<SprintBacklogOutputDTO> addUserStoryToSprint(@PathVariable Long sprintId, @PathVariable Long userStoryId) {
         try {
-            SprintBacklogOutputDTO updatedSprintBacklog = sprintBacklogService.ajouterUserStoryAuSprint(sprintId, userStoryId);
+            SprintBacklogOutputDTO updatedSprintBacklog = sprintBacklogService.addUserStoryAuSprint(sprintId, userStoryId);
             return ResponseEntity.ok(updatedSprintBacklog);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

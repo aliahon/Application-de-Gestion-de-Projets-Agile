@@ -3,12 +3,12 @@ package com.GestionProjet.GestionProjet.Services.Impl;
 import com.GestionProjet.GestionProjet.DTOClasses.TaskInputDTO;
 import com.GestionProjet.GestionProjet.DTOClasses.TaskOutputDTO;
 import com.GestionProjet.GestionProjet.Entities.Task;
+import com.GestionProjet.GestionProjet.Entities.UserStory;
 import com.GestionProjet.GestionProjet.Repositories.TaskRepository;
 import com.GestionProjet.GestionProjet.Repositories.UserStoryRepository;
 import com.GestionProjet.GestionProjet.Services.TaskService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +30,11 @@ public class TaskServiceImpl implements TaskService {
         task.setTitle(taskInputDTO.getTitle());
         task.setDescription(taskInputDTO.getDescription());
         task.setStatus(taskInputDTO.getStatus());
-        task.setUserstory(userStoryRepository.findById(taskInputDTO.getUserStoryId())
-                .orElseThrow(() -> new RuntimeException("UserStory not found")));
+
+        // Convertir l'ID du UserStory (UserStoryDTO) en entité UserStory
+        UserStory userStory = userStoryRepository.findById(taskInputDTO.getUserStoryId())
+                .orElseThrow(() -> new RuntimeException("UserStory not found"));
+        task.setUserstory(userStory);
 
         // Sauvegarder la tâche
         Task savedTask = taskRepository.save(task);
@@ -56,19 +59,24 @@ public class TaskServiceImpl implements TaskService {
 
     // Méthode pour mettre à jour une tâche
     public TaskOutputDTO updateTask(Long id, TaskInputDTO taskInputDTO) {
-        return taskRepository.findById(id)
-                .map(task -> {
-                    task.setTitle(taskInputDTO.getTitle());
-                    task.setDescription(taskInputDTO.getDescription());
-                    task.setStatus(taskInputDTO.getStatus());
-                    task.setUserstory(userStoryRepository.findById(taskInputDTO.getUserStoryId())
-                            .orElseThrow(() -> new RuntimeException("UserStory not found")));
+        // Find the task by its ID
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found")); // Ensure task is found, otherwise throw exception
 
-                    Task updatedTask = taskRepository.save(task);
-                    return convertToOutputDTO(updatedTask);
-                })
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+        // Set task details
+        task.setTitle(taskInputDTO.getTitle());
+        task.setDescription(taskInputDTO.getDescription());
+        task.setStatus(taskInputDTO.getStatus());
+        task.setUserstory(userStoryRepository.findById(taskInputDTO.getUserStoryId())
+                .orElseThrow(() -> new RuntimeException("UserStory not found"))); // Ensure UserStory exists
+
+        // Save updated task
+        Task updatedTask = taskRepository.save(task);
+
+        // Convert to output DTO
+        return convertToOutputDTO(updatedTask);
     }
+
 
     // Méthode pour supprimer une tâche
     public void deleteTask(Long id) {
@@ -76,13 +84,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     // Méthode pour convertir une Task en TaskOutputDTO
-    private TaskOutputDTO convertToOutputDTO(Task task) {
-        return TaskOutputDTO.builder()
-                .id(task.getId())
-                .title(task.getTitle())
-                .description(task.getDescription())
-                .status(task.getStatus())
-                .userStoryId(task.getUserstory().getId())  // Assurer de récupérer l'ID du UserStory
-                .build();
+    public TaskOutputDTO convertToOutputDTO(Task task) {
+        TaskOutputDTO taskOutputDTO = new TaskOutputDTO();
+        taskOutputDTO.setId(task.getId());
+        taskOutputDTO.setTitle(task.getTitle());
+        taskOutputDTO.setDescription(task.getDescription());
+        taskOutputDTO.setStatus(task.getStatus());
+
+        // Assurer que userStoryId n'est pas null
+        if (task.getUserstory() != null) {
+            taskOutputDTO.setUserStoryId(task.getUserstory().getId());
+        }
+
+        return taskOutputDTO;
     }
 }

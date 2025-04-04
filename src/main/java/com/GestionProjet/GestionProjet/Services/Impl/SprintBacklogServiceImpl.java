@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,50 +29,55 @@ public class SprintBacklogServiceImpl implements SprintBacklogService {
     private final UserStoryRepository userStoryRepository;
 
     @Override
-    public SprintBacklogOutputDTO creerSprintBacklog(SprintBacklogInputDTO sprintBacklogInputDTO) {
-        // Récupérer le ProductBacklog
+    public SprintBacklogOutputDTO createSprintBacklog(SprintBacklogInputDTO sprintBacklogInputDTO) {
         ProductBacklog productBacklog = productBacklogRepository.findById(sprintBacklogInputDTO.getProductBacklogId())
                 .orElseThrow(() -> new RuntimeException("ProductBacklog non trouvé"));
 
-        // Créer le SprintBacklog
         SprintBacklog sprintBacklog = new SprintBacklog();
         sprintBacklog.setNom(sprintBacklogInputDTO.getNom());
         sprintBacklog.setDateDebut(sprintBacklogInputDTO.getDateDebut());
         sprintBacklog.setDateFin(sprintBacklogInputDTO.getDateFin());
         sprintBacklog.setProductBacklog(productBacklog);
 
-        // Sauvegarder le SprintBacklog
         SprintBacklog savedSprintBacklog = sprintBacklogRepository.save(sprintBacklog);
 
-        // Retourner le SprintBacklog en tant que DTO
         return SprintBacklogOutputDTO.builder()
                 .id(savedSprintBacklog.getId())
                 .nom(savedSprintBacklog.getNom())
                 .dateDebut(savedSprintBacklog.getDateDebut())
                 .dateFin(savedSprintBacklog.getDateFin())
                 .productBacklogId(savedSprintBacklog.getProductBacklog().getId())
+                .userStories(new ArrayList<>()) // initialiser vide
                 .build();
     }
 
     @Override
-    public SprintBacklogOutputDTO ajouterUserStoryAuSprint(Long sprintBacklogId, Long userStoryId) {
+    public SprintBacklogOutputDTO addUserStoryAuSprint(Long sprintBacklogId, Long userStoryId) {
         SprintBacklog sprintBacklog = sprintBacklogRepository.findById(sprintBacklogId)
                 .orElseThrow(() -> new RuntimeException("Sprint Backlog non trouvé"));
 
         UserStory userStory = userStoryRepository.findById(userStoryId)
                 .orElseThrow(() -> new RuntimeException("User Story non trouvée"));
 
-        // Ajouter la UserStory au SprintBacklog
         sprintBacklog.ajouterUserStory(userStory);
         sprintBacklogRepository.save(sprintBacklog);
 
-        // Retourner le SprintBacklog après ajout de la UserStory
+        List<UserStoryOutputDTO> userStoryDTOs = sprintBacklog.getUserStories()
+                .stream()
+                .map(us -> UserStoryOutputDTO.builder()
+                        .id(us.getId())
+                        .title(us.getTitle())
+                        .description(us.getDescription())
+                        .build())
+                .collect(Collectors.toList());
+
         return SprintBacklogOutputDTO.builder()
                 .id(sprintBacklog.getId())
                 .nom(sprintBacklog.getNom())
                 .dateDebut(sprintBacklog.getDateDebut())
                 .dateFin(sprintBacklog.getDateFin())
                 .productBacklogId(sprintBacklog.getProductBacklog().getId())
+                .userStories(userStoryDTOs)
                 .build();
     }
 
@@ -79,27 +85,47 @@ public class SprintBacklogServiceImpl implements SprintBacklogService {
     public List<SprintBacklogOutputDTO> getAllSprintBacklogs() {
         List<SprintBacklog> sprintBacklogs = sprintBacklogRepository.findAll();
         return sprintBacklogs.stream()
-                .map(sprintBacklog -> SprintBacklogOutputDTO.builder()
-                        .id(sprintBacklog.getId())
-                        .nom(sprintBacklog.getNom())
-                        .dateDebut(sprintBacklog.getDateDebut())
-                        .dateFin(sprintBacklog.getDateFin())
-                        .productBacklogId(sprintBacklog.getProductBacklog().getId())
-                        .build())
+                .map(sprintBacklog -> {
+                    List<UserStoryOutputDTO> userStories = sprintBacklog.getUserStories().stream()
+                            .map(us -> UserStoryOutputDTO.builder()
+                                    .id(us.getId())
+                                    .title(us.getTitle())
+                                    .description(us.getDescription())
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    return SprintBacklogOutputDTO.builder()
+                            .id(sprintBacklog.getId())
+                            .nom(sprintBacklog.getNom())
+                            .dateDebut(sprintBacklog.getDateDebut())
+                            .dateFin(sprintBacklog.getDateFin())
+                            .productBacklogId(sprintBacklog.getProductBacklog().getId())
+                            .userStories(userStories)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<SprintBacklogOutputDTO> getSprintBacklogById(Long id) {
-        Optional<SprintBacklog> sprintBacklog = sprintBacklogRepository.findById(id);
-        return sprintBacklog.map(springBacklogEntity ->
-                SprintBacklogOutputDTO.builder()
-                        .id(springBacklogEntity.getId())
-                        .nom(springBacklogEntity.getNom())
-                        .dateDebut(springBacklogEntity.getDateDebut())
-                        .dateFin(springBacklogEntity.getDateFin())
-                        .productBacklogId(springBacklogEntity.getProductBacklog().getId())
-                        .build());
+        return sprintBacklogRepository.findById(id).map(sprintBacklog -> {
+            List<UserStoryOutputDTO> userStories = sprintBacklog.getUserStories().stream()
+                    .map(us -> UserStoryOutputDTO.builder()
+                            .id(us.getId())
+                            .title(us.getTitle())
+                            .description(us.getDescription())
+                            .build())
+                    .collect(Collectors.toList());
+
+            return SprintBacklogOutputDTO.builder()
+                    .id(sprintBacklog.getId())
+                    .nom(sprintBacklog.getNom())
+                    .dateDebut(sprintBacklog.getDateDebut())
+                    .dateFin(sprintBacklog.getDateFin())
+                    .productBacklogId(sprintBacklog.getProductBacklog().getId())
+                    .userStories(userStories)
+                    .build();
+        });
     }
 
     @Override
@@ -111,12 +137,19 @@ public class SprintBacklogServiceImpl implements SprintBacklogService {
         sprintBacklog.setDateDebut(sprintBacklogInputDTO.getDateDebut());
         sprintBacklog.setDateFin(sprintBacklogInputDTO.getDateFin());
 
-        // Mettre à jour le ProductBacklog
         ProductBacklog productBacklog = productBacklogRepository.findById(sprintBacklogInputDTO.getProductBacklogId())
                 .orElseThrow(() -> new RuntimeException("ProductBacklog non trouvé"));
         sprintBacklog.setProductBacklog(productBacklog);
 
         SprintBacklog updatedSprintBacklog = sprintBacklogRepository.save(sprintBacklog);
+
+        List<UserStoryOutputDTO> userStories = updatedSprintBacklog.getUserStories().stream()
+                .map(us -> UserStoryOutputDTO.builder()
+                        .id(us.getId())
+                        .title(us.getTitle())
+                        .description(us.getDescription())
+                        .build())
+                .collect(Collectors.toList());
 
         return SprintBacklogOutputDTO.builder()
                 .id(updatedSprintBacklog.getId())
@@ -124,8 +157,10 @@ public class SprintBacklogServiceImpl implements SprintBacklogService {
                 .dateDebut(updatedSprintBacklog.getDateDebut())
                 .dateFin(updatedSprintBacklog.getDateFin())
                 .productBacklogId(updatedSprintBacklog.getProductBacklog().getId())
+                .userStories(userStories)
                 .build();
     }
+
     @Override
     public List<UserStoryOutputDTO> getUserStoriesBySprintBacklog(Long sprintBacklogId) {
         SprintBacklog sprintBacklog = sprintBacklogRepository.findById(sprintBacklogId)
@@ -147,10 +182,8 @@ public class SprintBacklogServiceImpl implements SprintBacklogService {
         SprintBacklog sprintBacklog = sprintBacklogRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sprint Backlog non trouvé"));
 
-        // Supprimer toutes les UserStories associées
-        sprintBacklog.getUserStories().forEach(userStory -> userStory.setSprintBacklog(null));  // Remove references
+        sprintBacklog.getUserStories().forEach(userStory -> userStory.setSprintBacklog(null));
 
-        // Supprimer le SprintBacklog
         sprintBacklogRepository.delete(sprintBacklog);
     }
 }
