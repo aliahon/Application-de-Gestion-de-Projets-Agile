@@ -19,5 +19,5 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "product_backlog_id")
-    private ProductBacklog productBacklog;
+    private com.GestionProjet.GestionProjet.Entities.ProductBacklog productBacklog;
 }
