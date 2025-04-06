@@ -27,13 +27,13 @@ public class ProductBacklog {
 
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<com.GestionProjet.GestionProjet.Entities.Epic> epics;
+    private List<Epic> epics;
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<com.GestionProjet.GestionProjet.Entities.UserStory> userStories;
+    private List<UserStory> userStories;
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<com.GestionProjet.GestionProjet.Entities.SprintBacklog> sprintBacklogs;
+    private List<SprintBacklog> sprintBacklogs;
 
 
 }
