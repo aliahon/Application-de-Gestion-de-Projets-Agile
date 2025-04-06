@@ -28,6 +28,18 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // Skip JWT check for Swagger and auth paths
+        if (path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/swagger-resources") ||
+                path.startsWith("/configuration") ||
+                path.startsWith("/webjars") ||
+                path.startsWith("/user")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // Reading Token from Authorization Header
         String token= request.getHeader("Authorization");
         if(token !=null) {

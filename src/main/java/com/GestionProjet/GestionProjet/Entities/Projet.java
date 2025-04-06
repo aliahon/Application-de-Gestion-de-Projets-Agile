@@ -20,5 +20,7 @@ public class Projet {
 
     private String nom;
     private String description;
+    @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<com.GestionProjet.GestionProjet.Entities.User> users;
 
 }

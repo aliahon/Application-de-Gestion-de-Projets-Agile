@@ -1,6 +1,5 @@
 package com.GestionProjet.GestionProjet.DTOClasses;
 
-import com.GestionProjet.GestionProjet.Entities.ProductBacklog;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

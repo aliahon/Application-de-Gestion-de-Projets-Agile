@@ -42,10 +42,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/saveUser", "/user/loginUser").permitAll()
-                        .requestMatchers("/api/product-backlog/**").hasRole("PRODUCT_OWNER")
-                        .requestMatchers("/api/sprints/**").hasAnyRole("SCRUM_MASTER", "DEVELOPER")
-                        .requestMatchers("/api/developer-only/**").hasRole("DEVELOPER")
+                        .requestMatchers("/user/saveUser",
+                                "/user/loginUser",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

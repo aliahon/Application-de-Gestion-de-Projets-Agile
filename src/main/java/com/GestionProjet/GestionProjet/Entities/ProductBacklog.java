@@ -25,17 +25,15 @@ public class ProductBacklog {
     @JoinColumn(name = "projet_id", unique = true)
     private Projet projet;
 
-    @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<User> users;
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Epic> epics;
+    private List<com.GestionProjet.GestionProjet.Entities.Epic> epics;
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserStory> userStories;
+    private List<com.GestionProjet.GestionProjet.Entities.UserStory> userStories;
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SprintBacklog> sprintBacklogs;
+    private List<com.GestionProjet.GestionProjet.Entities.SprintBacklog> sprintBacklogs;
 
 
 }
