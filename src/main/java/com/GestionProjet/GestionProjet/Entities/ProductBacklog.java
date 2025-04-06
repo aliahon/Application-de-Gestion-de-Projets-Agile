@@ -25,8 +25,6 @@ public class ProductBacklog {
     @JoinColumn(name = "projet_id", unique = true)
     private Projet projet;
 
-    @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<User> users;
 
     @OneToMany(mappedBy = "productBacklog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Epic> epics;
