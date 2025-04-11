@@ -1,57 +1,46 @@
 package com.GestionProjet.GestionProjet.Controllers;
 
-import com.GestionProjet.GestionProjet.DTOClasses.UserInput;
-import com.GestionProjet.GestionProjet.DTOClasses.UserOutput;
+import com.GestionProjet.GestionProjet.DTOClasses.UserCreateDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.UserDTO;
 import com.GestionProjet.GestionProjet.Entities.User;
 import com.GestionProjet.GestionProjet.Services.UserService;
-import com.GestionProjet.GestionProjet.Services.JWTService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.security.authentication.AuthenticationManager;
+import java.util.List;
 
-import java.security.Principal;
-
-@Controller
-@RequestMapping("/user")
+@RestController
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private JWTService util;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final UserService userService;
 
-    @PostMapping("/saveUser")
-    public ResponseEntity<String> saveUser(@RequestBody User user) {
-
-        Integer id = userService.saveUser(user);
-        String message= "User with id '"+id+"' saved succssfully!";
-        //return new ResponseEntity<String>(message, HttpStatus.OK);
-        return ResponseEntity.ok(message);
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PostMapping("/loginUser")
-    public ResponseEntity<UserOutput> login(@RequestBody UserInput request){
-
-        //Validate username/password with DB(required in case of Stateless Authentication)
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getUsername(), request.getPassword()));
-        String token =util.generateToken(request.getUsername());
-        return ResponseEntity.ok(UserOutput.builder()
-                .token(token)
-                .message("Token generated successfully!")
-                .build());
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@Valid @PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PostMapping("/getData")
-    public ResponseEntity<String> testAfterLogin(Principal p){
-        return ResponseEntity.ok("You are accessing data after a valid Login. You are :" +p.getName());
+    @PostMapping
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO user) {
+        return ResponseEntity.ok(userService.createUser(user));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> updateUser(@Valid @PathVariable Long id, @RequestBody UserCreateDTO user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok().build();
     }
 }

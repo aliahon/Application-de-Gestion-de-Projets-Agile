@@ -1,57 +1,97 @@
 package com.GestionProjet.GestionProjet.Services.Impl;
 
+import com.GestionProjet.GestionProjet.DTOClasses.UserCreateDTO;
+import com.GestionProjet.GestionProjet.DTOClasses.UserDTO;
 import com.GestionProjet.GestionProjet.Entities.User;
 import com.GestionProjet.GestionProjet.Repositories.UserRepository;
 import com.GestionProjet.GestionProjet.Services.UserService;
-import com.GestionProjet.GestionProjet.enumeration.Role;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+
 @Service
-public class UserServiceImpl implements UserService , UserDetailsService {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepo;
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptEncoder;
-
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Integer saveUser(User user) {
-        //Encode password before saving to DB
-        user.setPassword(bCryptEncoder.encode(user.getPassword()));
-        return userRepo.save(user).getId();
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::userToDto)
+                .toList();
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepo.findByUsername(username);
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userToDto(user);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> opt = userRepo.findByUsername(username);
-
-        org.springframework.security.core.userdetails.User springUser=null;
-
-        if(opt.isEmpty()) {
-            throw new UsernameNotFoundException("User with username: " +username +" not found");
-        }else {
-            User user =opt.get();	//retrieving user from DB
-            springUser = new org.springframework.security.core.userdetails.User(
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getAuthorities());
+    public UserDTO createUser(UserCreateDTO dto) {
+        if (userRepository.existsByUsername(dto.getUsername())) {
+            throw new IllegalArgumentException("Username is already taken");
+        }
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Email is already registered");
         }
 
-        return springUser;
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+
+        User saved = userRepository.save(User.builder()
+                .username(dto.getUsername())
+                .email(dto.getEmail())
+                .password(encodedPassword)
+                .role(dto.getRole())
+                .build());
+
+        return userToDto(saved);
+    }
+
+    @Override
+    public UserDTO updateUser(Long id, UserCreateDTO updatedUser) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (updatedUser.getUsername() != null && !updatedUser.getUsername().isEmpty()) {
+            existingUser.setUsername(updatedUser.getUsername());
+        }
+
+        if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
+            existingUser.setEmail(updatedUser.getEmail());
+        }
+
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
+        if (updatedUser.getRole() != null) {
+            existingUser.setRole(updatedUser.getRole());
+        }
+
+        User saved = userRepository.save(existingUser);
+        return userToDto(saved);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    // Mapper
+    private UserDTO userToDto(User user) {
+        return UserDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .username(user.getUsername())
+                .build();
     }
 }
+
+
