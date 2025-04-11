@@ -1,6 +1,7 @@
 package com.GestionProjet.GestionProjet.ServicesTests;
 
 import com.GestionProjet.GestionProjet.DTOClasses.UserStoryOutputDTO;
+import com.GestionProjet.GestionProjet.Services.Impl.UserStoryServiceImpl;
 import com.GestionProjet.GestionProjet.enumeration.Priority;
 import com.GestionProjet.GestionProjet.enumeration.Status;
 import com.GestionProjet.GestionProjet.Entities.UserStory;
@@ -26,7 +27,7 @@ public class UserStoryServiceTest {
     private UserStoryRepository userStoryRepository;
 
     @InjectMocks
-    private UserStoryService userStoryService;
+    private UserStoryServiceImpl userStoryService;
 
     private UserStory userStory;
 

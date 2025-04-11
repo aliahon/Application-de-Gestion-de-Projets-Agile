@@ -5,6 +5,8 @@ import com.GestionProjet.GestionProjet.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name="user")
@@ -15,6 +17,7 @@ public class User{
 
     @Id
     @GeneratedValue
+    @Column(name = "user_id")
     private Long id;
     private String username;
     private String password;
@@ -33,8 +36,7 @@ public class User{
     private Role role;
 
 
-    @ManyToOne
-    @JoinColumn(name = "projet_id")
-    private Projet projet;
+    @ManyToMany(mappedBy = "users")
+    private List<Projet> projets;
 
 }
