@@ -56,18 +56,26 @@ public class SecurityConf {
                             .hasAnyRole("SCRUM_MASTER", "DEVELOPPEUR");
 
                     //SprintBacklogController
+                    auth.requestMatchers(HttpMethod.GET, "/sprintBacklogs/**")
+                            .hasAnyRole("PRODUCT_OWNER", "DEVELOPPEUR");
                     auth.requestMatchers("/sprintBacklogs/**")
                             .hasRole("SCRUM_MASTER");
 
                     //ProjetController
+                    auth.requestMatchers(HttpMethod.GET, "/projets/**")
+                            .hasAnyRole("SCRUM_MASTER", "DEVELOPPEUR");
                     auth.requestMatchers("/projets/**")
                             .hasRole("PRODUCT_OWNER");
 
                     //ProductBacklogController
+                    auth.requestMatchers(HttpMethod.GET, "/product-backlogs/**")
+                            .hasAnyRole("SCRUM_MASTER", "DEVELOPPEUR");
                     auth.requestMatchers("/product-backlogs/**")
                             .hasRole("PRODUCT_OWNER");
 
                     //EpicController
+                    auth.requestMatchers(HttpMethod.GET, "/epics/**")
+                            .hasAnyRole("SCRUM_MASTER", "DEVELOPPEUR");
                     auth.requestMatchers("/epics/**")
                             .hasRole("PRODUCT_OWNER");
 
