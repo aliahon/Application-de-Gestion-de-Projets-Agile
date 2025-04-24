@@ -1,0 +1,128 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[french]{babel}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{multirow}
+\geometry{left=2cm, right=2cm, top=2cm, bottom=2cm}
+
+% Définition des styles
+\definecolor{darkblue}{RGB}{44, 62, 80}
+\definecolor{lightgray}{RGB}{230, 230, 230}
+\definecolor{accent}{RGB}{231, 76, 60}
+
+\titleformat{\section}{\large\bfseries\color{darkblue}}{}{0em}{}
+\titleformat{\subsection}{\bfseries\color{accent}}{}{0em}{}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+\begin{figure}
+        \centering
+        \includegraphics[width=0.5\linewidth]{imgs/logo.png}
+    \end{figure}
+    {\scshape\Large Product Backlog et Sprint Backlog\\ \par}
+    \vspace{2cm}
+    \rule{\textwidth}{1.6pt}\vspace*{-\baselineskip}\vspace*{2pt}
+    \rule{\textwidth}{0.4pt}\\[\baselineskip]
+    {\huge\bfseries Projet : Application de Gestion de Projet Agile\par}
+    \vspace{0.5cm}
+    \rule{\textwidth}{0.4pt}\vspace*{-\baselineskip}\vspace{3.2pt}
+    \rule{\textwidth}{1.6pt}\\[\baselineskip]
+
+
+    \vspace{2cm}
+    \vfill
+    \large\textbf{Etudiantes :}\\
+    \vspace{0.5 cm}
+        AMILK Hanane \\
+        EL IDRISSI Nohaila \\
+        OULAARIF Nouhaila
+
+    \vfill
+    \vfill
+    {\large \today\par}
+\end{titlepage}
+\tableofcontents
+\newpage
+\section{Product Backlog}
+
+% Epic 1
+\begin{tcolorbox}[colframe=darkblue,colback=lightgray,title=\textbf{Epic 1 : Gestion du Product Backlog}]
+\begin{itemize}
+    \item \textbf{US-01} : En tant que \textbf{Product Owner}, je veux pouvoir créer un Product Backlog, afin d’organiser les User Stories de mon projet.
+    \item \textbf{US-02} : En tant que \textbf{Product Owner}, je veux ajouter, modifier et supprimer des User Stories dans le Product Backlog.
+    \item \textbf{US-03} : En tant que \textbf{Product Owner}, je veux pouvoir prioriser les User Stories en fonction de leur importance.
+    \item \textbf{US-04} : En tant que \textbf{Product Owner}, je veux pouvoir lier une User Story à un Epic, afin de structurer le backlog.
+\end{itemize}
+\end{tcolorbox}
+
+% Epic 2
+\begin{tcolorbox}[colframe=darkblue,colback=lightgray,title=\textbf{Epic 2 : Gestion des Epics}]
+\textbf{US-05} : En tant que \textbf{Product Owner}, je veux créer et gérer des Epics, pour regrouper les User Stories similaires.\\
+\textbf{US-06} : En tant que \textbf{Product Owner}, je veux voir toutes les User Stories associées à un Epic.
+\end{tcolorbox}
+
+% Epic 3
+\begin{tcolorbox}[colframe=darkblue,colback=lightgray,title=\textbf{Epic 3 : Gestion du Sprint Backlog}]
+\textbf{US-07} : En tant que \textbf{Scrum Master}, je veux pouvoir créer des Sprint Backlogs.\\
+\textbf{US-08} : En tant que \textbf{Scrum Master}, je veux ajouter des User Stories et des tasks à un Sprint Backlog.\\
+\textbf{US-09} : En tant que \textbf{Développeur}, je veux voir les User Stories et leurs Tasks dans le Sprint Backlog.\\
+\textbf{US-10} : En tant que \textbf{Développeur}, je veux mettre à jour le statut des Tasks.
+\end{tcolorbox}
+% Epic 4
+\begin{tcolorbox}[colframe=darkblue,colback=lightgray,title=\textbf{Epic 5 : Gestion des utilisateurs et des rôles}]
+\textbf{US-13} : En tant qu’\textbf{utilisateur}, je veux pouvoir m’inscrire et me connecter à l’application.\\
+\textbf{US-12} : En tant qu’\textbf{utilisateur},  je veux un système de gestion des rôles (Product Owner, Scrum Master, Développeur).\\
+\textbf{US-09} : En tant que \textbf{Développeur}, je veux voir les User Stories et leurs Tasks dans le Sprint Backlog.\\
+\textbf{US-10} : En tant que \textbf{Scrum Master}, je veux assigner des Tasks aux Développeurs en fonction de leurs compétences.
+\end{tcolorbox}
+\newpage
+\section{Sprint Backlog - Sprint 1}
+\textbf{Durée :} 1 semaines\\
+\textbf{Objectif :} Développer les endpoints de l’API pour la gestion du \textbf{Product Backlog} et des \textbf{User Stories}.\\
+
+\subsection{User Stories sélectionnées}
+1. \textbf{US-01} : Création d’un Product Backlog.  \\
+2. \textbf{US-02} : Ajout, modification et suppression de User Stories. \\
+3. \textbf{US-03} : Priorisation des User Stories.
+\subsection{Déstribution des tâches:}
+\vspace{10pt}
+\noindent
+%High, Medium, Low
+\begin{tabular}{|m{2cm}|m{8cm}|m{2cm}|m{4cm}|}
+    \hline
+    \textbf{User Story} & \textbf{Tâches} & \textbf{Prioritée} & \textbf{Responsable} \\
+    \hline
+    \multirow{4}{*}{\textbf{US-01}} & Créer la structure de la base de données pour le Product Backlog. & High & Nouhaila Oulaarif \\
+    \cline{2-4}
+    & Développer l’endpoint POST \texttt{/product-backlog} pour créer un Product Backlog. & High & Nouhaila Oulaarif \\
+    \cline{2-4}
+    & Développer l’endpoint GET \texttt{/product-backlog} pour récupérer la liste des Product Backlogs. & Medium & Nouhaila Oulaarif \\
+    \cline{2-4}
+    & Tester les endpoints \texttt{/product-backlog}. & Medium & Nouhaila Oulaarif \\
+    \hline
+    \multirow{6}{*}{\textbf{US-02}} & Créer la structure de base de données pour les User Stories. & High & Nohaila El Idrissi \\
+    \cline{2-4}
+    & Développer l’endpoint POST \texttt{/user-stories} pour ajouter une User Story. & High & Nohaila El Idrissi \\
+    \cline{2-4}
+    & Développer l’endpoint PUT \texttt{/user-stories/\{id\}} pour modifier une User Story. & High & Nohaila El Idrissi \\
+    \cline{2-4}
+    & Développer l’endpoint DELETE \texttt{/user-stories/\{id\}} pour supprimer une User Story. & High & Nohaila El Idrissi \\
+    \cline{2-4}
+    & Développer l’endpoint GET \texttt{/user-stories} pour récupérer toutes les User Stories. & High & Nohaila El Idrissi \\
+    \cline{2-4}
+    & Tester les endpoints \texttt{/user-stories}. & Medium & Nohaila El Idrissi \\
+    \hline
+    \multirow{3}{*}{\textbf{US-03}} & Ajouter un champ \texttt{priorité} aux User Stories dans la base de données. & Medium & Hanane Amilk \\
+    \cline{2-4}
+    & Ajouter la fonction de calcule des priorités. & Medium & Hanane Amilk \\
+    \cline{2-4}
+    & Tester la gestion des priorités. & Medium & Hanane Amilk \\
+    \hline
+\end{tabular}
+
+\end{document}

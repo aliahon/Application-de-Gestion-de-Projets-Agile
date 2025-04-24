@@ -1,4 +1,5 @@
 package com.GestionProjet.GestionProjet.DTOClasses;
+import com.GestionProjet.GestionProjet.enumeration.Priority;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -11,4 +12,5 @@ public class UserStoryInputDTO {
     @NotNull(message="The user story title cannot be null")
     public String title;
     public String description;
+    public Priority priority;
 }
